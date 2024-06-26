@@ -35,9 +35,14 @@ const App = () => {
     fetchUsers(1, 6);
   }, []);
 
+  const api = axios.create({
+    baseURL:
+      "https://user-management-api-cvmt.onrender.com",
+  });
+
   const fetchToken = useCallback(async () => {
     try {
-      const response = await axios.get("/token");
+      const response = await api.get("/token");
       setToken(response.data.token);
     } catch (err) {
       handleError(err, "Error fetching token");
@@ -50,7 +55,7 @@ const App = () => {
 
   const fetchPositions = useCallback(async () => {
     try {
-      const response = await axios.get("/positions");
+      const response = await api.get("/positions");
       setPositions(response.data);
     } catch (err) {
       handleError(err, "Error fetching positions");
@@ -63,7 +68,7 @@ const App = () => {
 
   const fetchUsers = useCallback(async (page, count) => {
     try {
-      const response = await axios.get("/users", {
+      const response = await api.get("/users", {
         params: { page, count },
       });
       if (page === 1) {
@@ -81,7 +86,7 @@ const App = () => {
 
   const fetchUserById = useCallback(async (id) => {
     try {
-      const response = await axios.get(`/users/${id}`);
+      const response = await api.get(`/users/${id}`);
       setUserById(response.data.user);
     } catch (err) {
       handleError(err, "Error fetching user by ID");
@@ -102,7 +107,7 @@ const App = () => {
       formData.delete("token");
 
       try {
-        const response = await axios.post(
+        const response = await api.post(
           "/users",
           formData,
           {
