@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import {
   Alert,
@@ -30,33 +35,33 @@ const App = () => {
     fetchUsers(1, 6);
   }, []);
 
-  const fetchToken = async () => {
+  const fetchToken = useCallback(async () => {
     try {
       const response = await axios.get("/token");
       setToken(response.data.token);
     } catch (err) {
       handleError(err, "Error fetching token");
     }
-  };
+  }, []);
 
-  const handleGenerateToken = () => {
+  const handleGenerateToken = useCallback(() => {
     fetchToken();
-  };
+  }, [fetchToken]);
 
-  const fetchPositions = async () => {
+  const fetchPositions = useCallback(async () => {
     try {
       const response = await axios.get("/positions");
       setPositions(response.data);
     } catch (err) {
       handleError(err, "Error fetching positions");
     }
-  };
+  }, []);
 
-  const handleFetchPositions = () => {
+  const handleFetchPositions = useCallback(() => {
     fetchPositions();
-  };
+  }, [fetchPositions]);
 
-  const fetchUsers = async (page, count) => {
+  const fetchUsers = useCallback(async (page, count) => {
     try {
       const response = await axios.get("/users", {
         params: { page, count },
@@ -72,49 +77,52 @@ const App = () => {
     } catch (err) {
       handleError(err, "Error fetching users");
     }
-  };
+  }, []);
 
-  const fetchUserById = async (id) => {
+  const fetchUserById = useCallback(async (id) => {
     try {
       const response = await axios.get(`/users/${id}`);
       setUserById(response.data.user);
     } catch (err) {
       handleError(err, "Error fetching user by ID");
     }
-  };
+  }, []);
 
-  const handleShowMore = () => {
+  const handleShowMore = useCallback(() => {
     const nextPage = page + 1;
     fetchUsers(nextPage, 6);
     setPage(nextPage);
-  };
+  }, [fetchUsers, page]);
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const token = formData.get("token");
-    formData.delete("token");
+  const handleFormSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const token = formData.get("token");
+      formData.delete("token");
 
-    try {
-      const response = await axios.post(
-        "/users",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            token,
-          },
-        }
-      );
-      alert(`User added: ${response.data.message}`);
-      fetchUsers(1, 6);
-      setPage(1);
-    } catch (err) {
-      handleError(err, "Error adding user");
-    }
-  };
+      try {
+        const response = await axios.post(
+          "/users",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              token,
+            },
+          }
+        );
+        alert(`User added: ${response.data.message}`);
+        fetchUsers(1, 6);
+        setPage(1);
+      } catch (err) {
+        handleError(err, "Error adding user");
+      }
+    },
+    [fetchUsers]
+  );
 
-  const handleError = (err, context) => {
+  const handleError = useCallback((err, context) => {
     const errorMessage = `
       ${context}:
       ${err.message}
@@ -127,21 +135,38 @@ const App = () => {
     `;
     setError(errorMessage);
     setOpen(true);
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = useCallback((event) => {
     setFileName(event.target.files[0].name);
-  };
+  }, []);
 
-  const handleFetchUserById = (event) => {
-    event.preventDefault();
-    const userId = event.target.elements.userId.value;
-    fetchUserById(userId);
-  };
+  const handleFetchUserById = useCallback(
+    (event) => {
+      event.preventDefault();
+      const userId = event.target.elements.userId.value;
+      fetchUserById(userId);
+    },
+    [fetchUserById]
+  );
+
+  const userList = useMemo(
+    () =>
+      users.map((user) => (
+        <ListItem key={user.id}>
+          <ListItemText
+            primary={
+              <pre>{JSON.stringify(user, null, 2)}</pre>
+            }
+          />
+        </ListItem>
+      )),
+    [users]
+  );
 
   return (
     <Container>
@@ -182,19 +207,7 @@ const App = () => {
         <Typography variant="h5">Users</Typography>
         {users.length > 0 && (
           <div>
-            <List>
-              {users.map((user) => (
-                <ListItem key={user.id}>
-                  <ListItemText
-                    primary={
-                      <pre>
-                        {JSON.stringify(user, null, 2)}
-                      </pre>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <List>{userList}</List>
             <Button
               variant="contained"
               onClick={handleShowMore}
