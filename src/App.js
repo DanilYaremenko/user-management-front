@@ -5,19 +5,6 @@ import React, {
   useMemo,
 } from "react";
 import axios from "axios";
-import {
-  Alert,
-  Snackbar,
-  Button,
-  Container,
-  TextField,
-  Typography,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Input,
-} from "@mui/material";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -162,125 +149,120 @@ const App = () => {
   const userList = useMemo(
     () =>
       users.map((user) => (
-        <ListItem key={user.id}>
-          <ListItemText
-            primary={
-              <pre>{JSON.stringify(user, null, 2)}</pre>
-            }
-          />
-        </ListItem>
+        <li key={user.id}>
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+        </li>
       )),
     [users]
   );
 
   return (
-    <Container>
-      <Typography variant="h3" gutterBottom>
-        API Data
-      </Typography>
-      <Button
-        variant="contained"
-        onClick={handleGenerateToken}
-      >
+    <div style={{ padding: "20px" }}>
+      <h1>API Data</h1>
+      <button onClick={handleGenerateToken}>
         Generate Token
-      </Button>
-      <Box my={2}>
-        <Typography variant="h5">Token</Typography>
+      </button>
+      <div style={{ margin: "20px 0" }}>
+        <h2>Token</h2>
         {token && (
-          <Box sx={{ maxWidth: "100%", overflowX: "auto" }}>
+          <div
+            style={{ maxWidth: "100%", overflowX: "auto" }}
+          >
             <pre>{JSON.stringify(token, null, 2)}</pre>
-          </Box>
+          </div>
         )}
-      </Box>
-      <Box my={2}>
-        <Typography variant="h5">Positions</Typography>
-        <Button
-          variant="contained"
-          onClick={handleFetchPositions}
-        >
+      </div>
+      <div style={{ margin: "20px 0" }}>
+        <h2>Positions</h2>
+        <button onClick={handleFetchPositions}>
           Get Positions
-        </Button>
+        </button>
         {positions.success && positions.positions && (
-          <Box sx={{ maxWidth: "100%", overflowX: "auto" }}>
+          <div
+            style={{ maxWidth: "100%", overflowX: "auto" }}
+          >
             <pre>
               {JSON.stringify(positions.positions, null, 2)}
             </pre>
-          </Box>
-        )}
-      </Box>
-      <Box my={2}>
-        <Typography variant="h5">Users</Typography>
-        {users.length > 0 && (
-          <div>
-            <List>{userList}</List>
-            <Button
-              variant="contained"
-              onClick={handleShowMore}
-            >
-              Show more
-            </Button>
           </div>
         )}
-      </Box>
-      <Box my={2}>
-        <Typography variant="h5">Get User by ID</Typography>
+      </div>
+      <div style={{ margin: "20px 0" }}>
+        <h2>Users</h2>
+        {users.length > 0 && (
+          <div>
+            <ul>{userList}</ul>
+            <button onClick={handleShowMore}>
+              Show more
+            </button>
+          </div>
+        )}
+      </div>
+      <div style={{ margin: "20px 0" }}>
+        <h2>Get User by ID</h2>
         <form onSubmit={handleFetchUserById}>
-          <Box my={2}>
-            <TextField
-              label="User ID"
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
               name="userId"
-              fullWidth
+              placeholder="User ID"
+              style={{ width: "100%" }}
             />
-          </Box>
-          <Button variant="contained" type="submit">
-            Fetch User
-          </Button>
+          </div>
+          <button type="submit">Fetch User</button>
         </form>
         {userById && (
-          <Box mt={2}>
-            <Typography variant="h6">
-              User Details
-            </Typography>
+          <div style={{ marginTop: "20px" }}>
+            <h3>User Details</h3>
             <pre>{JSON.stringify(userById, null, 2)}</pre>
-          </Box>
+          </div>
         )}
-      </Box>
-      <Box my={2}>
-        <Typography variant="h5">Add New User</Typography>
+      </div>
+      <div style={{ margin: "20px 0" }}>
+        <h2>Add New User</h2>
         <form onSubmit={handleFormSubmit}>
-          <Box my={2}>
-            <TextField label="Name" name="name" fullWidth />
-          </Box>
-          <Box my={2}>
-            <TextField
-              label="Email"
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
               name="email"
-              fullWidth
+              placeholder="Email"
+              style={{ width: "100%" }}
             />
-          </Box>
-          <Box my={2}>
-            <TextField
-              label="Phone"
+          </div>
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
               name="phone"
-              fullWidth
+              placeholder="Phone"
+              style={{ width: "100%" }}
             />
-          </Box>
-          <Box my={2}>
-            <TextField
-              label="Position ID"
+          </div>
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
               name="position_id"
-              fullWidth
+              placeholder="Position ID"
+              style={{ width: "100%" }}
             />
-          </Box>
-          <Box my={2}>
-            <TextField
-              label="Token"
+          </div>
+          <div style={{ margin: "10px 0" }}>
+            <input
+              type="text"
               name="token"
-              fullWidth
+              placeholder="Token"
+              style={{ width: "100%" }}
             />
-          </Box>
-          <Box my={2}>
-            <Input
+          </div>
+          <div style={{ margin: "10px 0" }}>
+            <input
               accept="image/*"
               id="photo"
               type="file"
@@ -289,33 +271,34 @@ const App = () => {
               style={{ display: "none" }}
             />
             <label htmlFor="photo">
-              <Button variant="contained" component="span">
+              <button
+                type="button"
+                onClick={() =>
+                  document.getElementById("photo").click()
+                }
+              >
                 Upload Photo
-              </Button>
+              </button>
             </label>
-            {fileName && (
-              <Typography>{fileName}</Typography>
-            )}
-          </Box>
-          <Button variant="contained" type="submit">
-            Add User
-          </Button>
+            {fileName && <div>{fileName}</div>}
+          </div>
+          <button type="submit">Add User</button>
         </form>
-      </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert
-          onClose={handleClose}
-          severity="error"
-          sx={{ width: "100%" }}
+      </div>
+      {open && (
+        <div
+          style={{
+            background: "red",
+            color: "white",
+            padding: "10px",
+            marginTop: "20px",
+          }}
         >
           {error}
-        </Alert>
-      </Snackbar>
-    </Container>
+          <button onClick={handleClose}>Close</button>
+        </div>
+      )}
+    </div>
   );
 };
 
