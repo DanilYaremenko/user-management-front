@@ -5,6 +5,7 @@ import React, {
   useMemo,
 } from "react";
 import axios from "axios";
+import "./App.css";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -158,12 +159,12 @@ const App = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>API Data</h1>
-      <button onClick={handleGenerateToken}>
-        Generate Token
-      </button>
+      <h1>Data from user management API</h1>
       <div style={{ margin: "20px 0" }}>
         <h2>Token</h2>
+        <button onClick={handleGenerateToken}>
+          Generate Token
+        </button>
         {token && (
           <div
             style={{ maxWidth: "100%", overflowX: "auto" }}
